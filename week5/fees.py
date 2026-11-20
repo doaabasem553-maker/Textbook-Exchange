@@ -55,13 +55,11 @@ def report(courses, student_type, summer=False, discount=0):
 
 
 def process_all(students):
+    """Return {name: fee} for every student, scholarship students included."""
+    fees = {}
     for student in students:
-        if student["type"] == 1:
-            fee = tuition_fee(
-                student["courses"], StudentType.REGULAR, student["summer"]
-            )
-        if student["type"] == 2:
-            fee = tuition_fee(
-                student["courses"], StudentType.STAFF_CHILD, student["summer"]
-            )
-        print(student["name"], fee)
+        student_type = StudentType(student["type"])
+        fees[student["name"]] = tuition_fee(
+            student["courses"], student_type, student["summer"]
+        )
+    return fees
