@@ -42,14 +42,16 @@ def tuition_fee(courses, student_type, summer=False, discount=0, extras=()):
 
 
 def report(courses, student_type, summer=False, discount=0):
+    """Return the fee report as text; printing is left to the caller."""
     fee = tuition_fee(courses, student_type, summer, discount)
+    lines = []
     if student_type == StudentType.REGULAR:
-        print("Student fee: " + str(fee))
+        lines.append(f"Student fee: {fee}")
     elif student_type == StudentType.STAFF_CHILD:
-        print("Staff child fee: " + str(fee))
+        lines.append(f"Staff child fee: {fee}")
     if fee > HIGH_FEE_THRESHOLD:
-        print("High fee")
-    return fee
+        lines.append("High fee")
+    return "\n".join(lines)
 
 
 def process_all(students):
