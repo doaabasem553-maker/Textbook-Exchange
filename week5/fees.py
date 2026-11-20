@@ -1,9 +1,15 @@
+from dataclasses import dataclass
 from enum import Enum
 
 RATE_PER_HOUR = 350
 HIGH_FEE_THRESHOLD = 6000
 HIGH_FEE_REDUCTION = 200
 SUMMER_SURCHARGE = 150
+
+
+@dataclass(frozen=True)
+class Course:
+    hours: int
 
 
 class StudentType(Enum):
@@ -20,11 +26,11 @@ RATE_FACTOR = {
 }
 
 
-def tuition_fee(courses, student_type, summer=False, discount=0, extras=[]):
+def tuition_fee(courses, student_type, summer=False, discount=0, extras=()):
     factor = RATE_FACTOR[student_type]
     total = 0
     for course in courses:
-        total = total + course["h"] * RATE_PER_HOUR * factor
+        total = total + course.hours * RATE_PER_HOUR * factor
     if total > HIGH_FEE_THRESHOLD:
         total = total - HIGH_FEE_REDUCTION
     if summer:
