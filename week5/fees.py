@@ -1,7 +1,6 @@
 from enum import Enum
 
 RATE_PER_HOUR = 350
-STAFF_CHILD_FACTOR = 0.5
 HIGH_FEE_THRESHOLD = 6000
 HIGH_FEE_REDUCTION = 200
 SUMMER_SURCHARGE = 150
@@ -13,27 +12,30 @@ class StudentType(Enum):
     SCHOLARSHIP = 3
 
 
-def tuition_fee(courses, student_type, summer, discount, extras=[]):
+# share of the full hourly rate that each type of student pays
+RATE_FACTOR = {
+    StudentType.REGULAR: 1,
+    StudentType.STAFF_CHILD: 0.5,
+    StudentType.SCHOLARSHIP: 0,
+}
+
+
+def tuition_fee(courses, student_type, summer=False, discount=0, extras=[]):
+    factor = RATE_FACTOR[student_type]
     total = 0
     for course in courses:
-        if student_type == StudentType.REGULAR:
-            total = total + course["h"] * RATE_PER_HOUR
-        elif student_type == StudentType.STAFF_CHILD:
-            total = total + course["h"] * RATE_PER_HOUR * STAFF_CHILD_FACTOR
-        elif student_type == StudentType.SCHOLARSHIP:
-            total = total + 0
+        total = total + course["h"] * RATE_PER_HOUR * factor
     if total > HIGH_FEE_THRESHOLD:
         total = total - HIGH_FEE_REDUCTION
-    if summer == True:
+    if summer:
         total = total + SUMMER_SURCHARGE
-    if discount != None:
-        total = total - discount
+    total = total - discount
     for extra in extras:
         total = total + extra
     return total
 
 
-def report(courses, student_type, summer, discount):
+def report(courses, student_type, summer=False, discount=0):
     fee = tuition_fee(courses, student_type, summer, discount)
     if student_type == StudentType.REGULAR:
         print("Student fee: " + str(fee))
@@ -48,10 +50,10 @@ def process_all(students):
     for student in students:
         if student["type"] == 1:
             fee = tuition_fee(
-                student["courses"], StudentType.REGULAR, student["summer"], None
+                student["courses"], StudentType.REGULAR, student["summer"]
             )
         if student["type"] == 2:
             fee = tuition_fee(
-                student["courses"], StudentType.STAFF_CHILD, student["summer"], None
+                student["courses"], StudentType.STAFF_CHILD, student["summer"]
             )
         print(student["name"], fee)
