@@ -1,3 +1,5 @@
+"""Tuition fee calculation for the Student Services App."""
+
 from dataclasses import dataclass
 from enum import Enum
 
@@ -9,10 +11,14 @@ SUMMER_SURCHARGE = 150
 
 @dataclass(frozen=True)
 class Course:
+    """A course the student is enrolled in, measured in credit hours."""
+
     hours: int
 
 
 class StudentType(Enum):
+    """Kinds of student, each with its own share of the hourly rate."""
+
     REGULAR = 1
     STAFF_CHILD = 2
     SCHOLARSHIP = 3
@@ -27,6 +33,7 @@ RATE_FACTOR = {
 
 
 def tuition_fee(courses, student_type, summer=False, discount=0, extras=()):
+    """Return the total fee for one student."""
     factor = RATE_FACTOR[student_type]
     total = 0
     for course in courses:
